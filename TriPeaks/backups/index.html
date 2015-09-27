@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Tri-Peaks Solitaire</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <script src="https://code.createjs.com/easeljs-0.8.1.min.js"></script>
+        <script src="card.js"></script>
+        <script>
+            var cards = [];
+            for(i=0; i<=52; i++) {
+                cards.push(new Card(i));
+                cards[i].x = i*20;
+            }
+            
+            function init()
+            {
+                var canvas = document.getElementById("canvas");
+                var stage = new createjs.Stage(canvas);
+                stage.addEventListener("click", function(event) { 
+                    var target = event.target;
+                    if( target instanceof Card ) {
+                        target.x = 100;
+                        target.y = 300;
+                        target.flip();
+                        stage.addChild(target);
+                        stage.update();
+                    }
+//                    if ( !target instanceof Card )
+//                        alert("not card");
+                });
+                for(i=0; i<cards.length; i++) {
+                    if( cards[i] instanceof Card ) {
+                        stage.addChild(cards[i]);
+                    }
+                }
+               
+                stage.update();
+            };
+        </script>
+    </head>
+    <body onload="init();">
+        <h1>Tri-Peaks Solitaire</h1>   
+        <canvas style='border: 5px solid green; background: url("images/background.jpg");' 
+                id="canvas" width="900" height="450">
+        </canvas> 
+        
+    </body>
+</html>

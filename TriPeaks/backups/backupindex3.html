@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Tri-Peaks Solitaire</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://code.createjs.com/easeljs-0.8.1.min.js"></script>
+        <script src="card.js"></script>
+        <script src="carddeck.js"></script>
+        <script src="CardTable_1.js"></script>
+        <script>   
+            function init(){
+                var cards = new CardDeck();
+                cards.listCards();
+                //var canvas = document.getElementById("canvas");
+                var table = new CardTable("canvas");
+                table.createStockPile(cards.getRemainingCards());
+                table.drawStockPile();
+                table.update();
+                
+//                stage.addEventListener("click", function(event) { 
+//                    var target = event.target;
+//                    var waste = wastePile[wastePile.length-1].getValue();
+//                    var clicked = target.getValue();
+//                    if( target instanceof Card && clicked == (waste + 1) || clicked == (waste - 1) 
+//                            && target.number != stockPile[stockPile.length-1].number) {
+//                        console.log(waste);
+//                        console.log(clicked);
+//                        target.x = 200;
+//                        target.y = 300;
+//                        wastePile.push(target); 
+//                        stage.addChild(target);
+//                        stage.update();
+//                    }
+//                    else if( target.number == stockPile[stockPile.length-1].number ) {
+//                        target.x = 200;
+//                        target.y = 300;
+//                        console.log("stock");
+//                        wastePile.push(stockPile.pop());
+//                        target.flip();
+//                        console.log(target.getWidth());
+//                        stage.addChild(target);
+//                        stage.update();
+//                    }
+//                });
+//                
+//                stage.update();
+            }
+        </script>
+    </head>
+    <body onload="init()">
+        <h1>Tri-Peaks Solitaire</h1>   
+        <canvas style='border: 5px solid green; background: url("images/background.jpg");' 
+                id="canvas" width="1000" height="450">
+        </canvas> 
+        
+    </body>
+</html>

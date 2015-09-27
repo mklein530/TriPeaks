@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Tri-Peaks Solitaire</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://code.createjs.com/easeljs-0.8.1.min.js"></script>
+        <script src="card.js"></script>
+        <script src="carddeck.js"></script>
+        <script>
+            var deck = new CardDeck();
+            var stockPile = [];
+            var wastePile = [];
+            
+            wastePile[0] = deck.getCard();
+            wastePile[0].x = 200;
+            wastePile[0].y = 300;
+            wastePile[0].flip();
+            function init()
+            {
+                var canvas = document.getElementById("canvas");
+                var stage = new createjs.Stage(canvas);
+                stage.addChild(wastePile[0]);
+                for(i=0; i<23; i++) {
+                    stockPile[i] = deck.getCard();
+                    stockPile[i].x = 100;
+                    stockPile[i].y = 300;
+                    stage.addChild(stockPile[i]);
+                }
+                var firstRow = [];
+                var secondRow = [];
+                var thirdRow = [];
+                var fourthRow = [];
+                //first row
+                for(i=0; i<3; i++) {
+                    firstRow[i] = deck.getCard();
+                    firstRow[i].x = firstRow[i].width*(i*3) + stage.canvas.width/4;
+                    stage.addChild(firstRow[i]);
+                }
+                for(i=0; i<6; i++) {
+                    secondRow[i] = deck.getCard();
+                    if(i < 3)
+                        secondRow[i].x = firstRow[i].x - (secondRow[i].width/2);
+                    else secondRow[i].x = firstRow[i%3].x + (secondRow[i].width/2);
+                    secondRow[i].y = secondRow[i].height/2;
+                    stage.addChild(secondRow[i]);
+                }
+                for(i=0; i<9; i++) {
+                    thirdRow[i] = deck.getCard();
+                    if(i<3)
+                        thirdRow[i].x = secondRow[i].x - (secondRow[i].width/2);
+                    else if(i > 2 && i < 6)
+                        thirdRow[i].x = secondRow[i%6].x - (secondRow[i].width/2); 
+                    else thirdRow[i].x = thirdRow[i-3].x + thirdRow[i].width;
+                    thirdRow[i].y = thirdRow[i].height;
+                    stage.addChild(thirdRow[i]);
+                }
+                var offSet = thirdRow[0].x - thirdRow[0].width/2;
+                for(i=0; i<10; i++) {
+                    fourthRow[i] = deck.getCard();
+                    fourthRow[i].x = offSet + fourthRow[i].width*i;
+                    fourthRow[i].y = thirdRow[0].y + fourthRow[i].height/2;
+                    fourthRow[i].flip();
+                    stage.addChild(fourthRow[i]);
+                }
+                stage.addEventListener("click", function(event) { 
+                    var target = event.target;
+                    var waste = wastePile[wastePile.length-1].getValue();
+                    var clicked = target.getValue();
+                    if( target instanceof Card && clicked == (waste + 1) || clicked == (waste - 1) 
+                            && target.number != stockPile[stockPile.length-1].number) {
+                        console.log(waste);
+                        console.log(clicked);
+                        target.x = 200;
+                        target.y = 300;
+                        wastePile.push(target); 
+                        stage.addChild(target);
+                        stage.update();
+                    }
+                    else if( target.number == stockPile[stockPile.length-1].number ) {
+                        target.x = 200;
+                        target.y = 300;
+                        console.log("stock");
+                        wastePile.push(stockPile.pop());
+                        target.flip();
+                        console.log(target.getWidth());
+                        stage.addChild(target);
+                        stage.update();
+                    }
+                    else if( target instanceof Card)
+                        console.log(target.number);
+//                    if ( !target instanceof Card )
+//                        alert("not card");
+                });
+                
+                stage.update();
+            }
+        </script>
+    </head>
+    <body onload="init();">
+        <h1>Tri-Peaks Solitaire</h1>   
+        <canvas style='border: 5px solid green; background: url("images/background.jpg");' 
+                id="canvas" width="1000" height="450">
+        </canvas> 
+        
+    </body>
+</html>
