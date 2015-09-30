@@ -10,7 +10,7 @@ function CardDeck() {
     //fill empty array
     for(i=1; i<=52; i++) {
         //fill deck with cards, with i being the number of the card
-        this.deck[i-1] = new Card(i);
+        this.deck.push( new Card(i) );
     }
     //shuffle deck
     this.shuffle();
@@ -18,7 +18,7 @@ function CardDeck() {
 
 CardDeck.prototype.getCard = function() {
     if(this.deck.length < 1) alert("No cards in the deck");
-    return this.deck.pop();
+	return this.deck.pop();
 };
 
 CardDeck.prototype.getSize = function () {
