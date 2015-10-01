@@ -46,7 +46,6 @@ window.onload = function init() {
 			stage.update();
 		}
 	});
-	//update the canvas to reflect the changes
 	stage.update();
 }
 
@@ -54,7 +53,7 @@ function createWastePile() {
 	//put one card on waste pile
 	wastePile.push( deck.getCard() );
 	wastePile[0].x = 200;
-	wastePile[0].y = 300;
+	wastePile[0].y = 350;
 	wastePile[0].flip();
 	//add waste pile card to canvas
 	stage.addChild(wastePile[0]);
@@ -62,7 +61,7 @@ function createWastePile() {
 
 function addToWastePile(card) {
 	card.x = 200;
-	card.y = 300;
+	card.y = 350;
 	wastePile.push(card);
 	stage.addChild(card);
 }
@@ -72,7 +71,7 @@ function createStockPile() {
 	for(i=0; i<23; i++) {
 		var currentCard = deck.getCard();
 		currentCard.x = 100;
-		currentCard.y = 300;
+		currentCard.y = 350;
 		stockPile.push(currentCard);
 		stage.addChild(stockPile[i]);
 	}
@@ -82,7 +81,8 @@ function createFirstRow() {
 	//create first row of cards and position on canvas
 	for(i=0; i<3; i++) {
 		var currentCard = deck.getCard();
-		currentCard.x = currentCard.width*(i*3) + 175;
+		currentCard.x = currentCard.width*(i*3) + 180;
+		currentCard.y = currentCard.height/2;
 		currentCard.setRow(1); 
 		firstRow[i] = currentCard;
 		stage.addChild(firstRow[i]);
@@ -98,7 +98,7 @@ function createSecondRow() {
 		else if(i < 4)
 			currentCard.x = currentCard.width*i + currentCard.width*3;
 		else currentCard.x = currentCard.width*i + currentCard.width*4;
-		currentCard.y = currentCard.height/2;
+		currentCard.y = currentCard.height;
 		currentCard.setRow(2);
 		secondRow[i] = currentCard;
 		stage.addChild(secondRow[i]);
@@ -110,7 +110,7 @@ function createThirdRow() {
 	for(i=0; i<9; i++) {
 		var currentCard = deck.getCard();
 		currentCard.x = currentCard.width*i + currentCard.width*1.5;
-		currentCard.y = currentCard.height;
+		currentCard.y = currentCard.height*3/2;
 		currentCard.setRow(3);
 		thirdRow[i] = currentCard;
 		stage.addChild(thirdRow[i]);
