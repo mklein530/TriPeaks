@@ -8,30 +8,88 @@ var firstRow = [];
 var secondRow = [];
 var thirdRow = [];
 var fourthRow = [];
-//put one card on waste pile
-wastePile.push( deck.getCard() );
-wastePile[0].x = 200;
-wastePile[0].y = 300;
-wastePile[0].flip();
+
 window.onload = function init() {
+	//get first card from deck and put on waste pile
+	var firstCard = deck.getCard();
+	firstCard.flip();
+	addToWastePile(firstCard);
+	createStockPile();
+	createFirstRow();
+	createSecondRow();
+	createThirdRow();
+	createFourthRow();
 	
+	stage.addEventListener("click", function(event) { 
+		//get the card that the user clicked 
+		var target = event.target;
+		//get the value of card on the top of the waste pile
+		//to check if the target card can be played
+		var waste = wastePile[wastePile.length-1].getValue();
+		//get value of clicked card for comparison
+		var clicked = target.getValue();
+		//if the clicked card is at the top of the stock pile, add to waste pile
+		if( target.getNumber() == stockPile[stockPile.length-1].getNumber()) {
+			var currentCard = stockPile.pop();
+			currentCard.flip();
+			addToWastePile(currentCard);
+			stage.update();
+		}
+		//if the clicked card is a card, check to see if it is one value greater than
+		//or less than the card on top of waste pile...//ace value == 1 and 2 value == 13 (because of the file arrangement)
+		//if clicked value + waste value is 15 (ace and 2), it can be played
+		else if( target instanceof Card && clicked == (waste + 1) || clicked == (waste - 1) 
+				|| (clicked + waste == 14) ) {
+			target.setPlayed();
+			addToWastePile(target); 
+			checkAdjacent(target);
+			stage.update();
+		}
+	});
+	//update the canvas to reflect the changes
+	stage.update();
+}
+
+function createWastePile() {
+	//put one card on waste pile
+	wastePile.push( deck.getCard() );
+	wastePile[0].x = 200;
+	wastePile[0].y = 300;
+	wastePile[0].flip();
 	//add waste pile card to canvas
 	stage.addChild(wastePile[0]);
+}
+
+function addToWastePile(card) {
+	card.x = 200;
+	card.y = 300;
+	wastePile.push(card);
+	stage.addChild(card);
+}
+
+function createStockPile() {
 	//create stock pile and add to canvas
 	for(i=0; i<23; i++) {
-		stockPile[i] = deck.getCard();
-		stockPile[i].x = 100;
-		stockPile[i].y = 300;
+		var currentCard = deck.getCard();
+		currentCard.x = 100;
+		currentCard.y = 300;
+		stockPile.push(currentCard);
 		stage.addChild(stockPile[i]);
 	}
-   
+}
+
+function createFirstRow() {
 	//create first row of cards and position on canvas
 	for(i=0; i<3; i++) {
-		firstRow[i] = deck.getCard();
-		firstRow[i].x = firstRow[i].width*(i*3) + 175;
-		firstRow[i].setRow(1);
+		var currentCard = deck.getCard();
+		currentCard.x = currentCard.width*(i*3) + 175;
+		currentCard.setRow(1); 
+		firstRow[i] = currentCard;
 		stage.addChild(firstRow[i]);
 	}
+}
+
+function createSecondRow() {
 	//create second row of cards and position on canvas
 	for(i=0; i<6; i++) {
 		currentCard = deck.getCard();
@@ -41,11 +99,14 @@ window.onload = function init() {
 			currentCard.x = currentCard.width*i + currentCard.width*3;
 		else currentCard.x = currentCard.width*i + currentCard.width*4;
 		currentCard.y = currentCard.height/2;
+		currentCard.setRow(2);
 		secondRow[i] = currentCard;
-		secondRow[i].setRow(2);
 		stage.addChild(secondRow[i]);
 	}
-//create third row of cards and position on canvas
+}
+
+function createThirdRow() {
+	//create third row of cards and position on canvas
 	for(i=0; i<9; i++) {
 		var currentCard = deck.getCard();
 		currentCard.x = currentCard.width*i + currentCard.width*1.5;
@@ -54,51 +115,22 @@ window.onload = function init() {
 		thirdRow[i] = currentCard;
 		stage.addChild(thirdRow[i]);
 	}
-//create fourth row of cards and position on canvas
+}
+//this function depends on the creation of the third row
+function createFourthRow() {
+	//create fourth row of cards and position on canvas
 	var offSet = thirdRow[0].x - thirdRow[0].width/2;
 	for(i=0; i<10; i++) {
-		fourthRow[i] = deck.getCard();
-		fourthRow[i].x = offSet + fourthRow[i].width*i;
-		fourthRow[i].y = thirdRow[0].y + fourthRow[i].height/2;
-		fourthRow[i].setRow(4);
-		fourthRow[i].flip();
+		var currentCard = deck.getCard();
+		currentCard.x = offSet + currentCard.width*i;
+		currentCard.y = thirdRow[0].y + currentCard.height/2;
+		currentCard.setRow(4);
+		currentCard.flip();
+		fourthRow[i] = currentCard;
 		stage.addChild(fourthRow[i]);
 	}
-	
-	stage.addEventListener("click", function(event) { 
-//get the card that the user clicked 
-		var target = event.target;
-//get the value of card on the top of the waste pile
-//to check if the target card can be played
-		var waste = wastePile[wastePile.length-1].getValue();
-		//get value of clicked card for comparison
-		var clicked = target.getValue();
-//if the clicked card is a card, check to see if it is one value greater than
-		//or less than the card on top of waste pile
-		if( target instanceof Card && clicked == (waste + 1) || clicked == (waste - 1) 
-				&& target.number != stockPile[stockPile.length-1].getNumber()) {
-			target.x = 200;
-			target.y = 300;
-			target.setPlayed();
-			wastePile.push(target); 
-			checkAdjacent(target);
-			stage.addChild(target);
-			stage.update();
-		}
-		else if( target.number == stockPile[stockPile.length-1].getNumber()) {
-			target.x = 200;
-			target.y = 300;
-			console.log("stock");
-			wastePile.push(stockPile.pop());
-			target.flip();
-			stage.addChild(target);
-			stage.update();
-		}
-
-	});
-	//update the canvas to reflect the changes
-	stage.update();
 }
+
 //checks played card to see if adjacent card has also been played
 //if it has, this function should flip the corresponding card
 //on the row above the two adjacent cards
@@ -111,7 +143,6 @@ function checkAdjacent(card) {
 		for(i=0; i<fourthRow.length-1; i++) {
 			if( fourthRow[i].hasBeenPlayed() && fourthRow[i+1].hasBeenPlayed() && !(thirdRow[i].isFaceUp()) ) {
 				thirdRow[i].flip();
-				console.log("third row index: " + i );
 			}
 		}
 	}
