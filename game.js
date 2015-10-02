@@ -2,6 +2,7 @@
 var canvas = document.getElementById("canvas");
 var stage = new createjs.Stage(canvas);
 var deck = new CardDeck();
+deck.shuffle();
 var stockPile = [];
 var wastePile = [];
 var firstRow = [];
@@ -10,6 +11,7 @@ var thirdRow = [];
 var fourthRow = [];
 
 window.onload = function init() {
+	
 	//get first card from deck and put on waste pile
 	var firstCard = deck.getCard();
 	firstCard.flip();
@@ -19,7 +21,10 @@ window.onload = function init() {
 	createSecondRow();
 	createThirdRow();
 	createFourthRow();
-	
+	var replay = document.getElementById("ReplayButton");
+	var newGame = document.getElementById("NewGame");
+	//newGame.addEventListener("click", window.location.reload(true));
+	replay.addEventListener("click", rebuildCanvas );
 	stage.addEventListener("click", function(event) { 
 		//get the card that the user clicked 
 		var target = event.target;
@@ -36,11 +41,12 @@ window.onload = function init() {
 			stage.update();
 		}
 		//if the clicked card is a card, check to see if it is one value greater than
-		//or less than the card on top of waste pile...//ace value == 1 and 2 value == 13 (because of the file arrangement)
-		//if clicked value + waste value is 15 (ace and 2), it can be played
+		//or less than the card on top of waste pile...
+		//ace value == 1 and 2 value == 13 (because of the file arrangement in /images)
+		//if clicked value + waste value is 14 (ace and 2), it can be played
 		else if( target instanceof Card && clicked == (waste + 1) || clicked == (waste - 1) 
 				|| (clicked + waste == 14) ) {
-			target.setPlayed();
+			target.setPlayed(true);
 			addToWastePile(target); 
 			checkAdjacent(target);
 			stage.update();
@@ -72,6 +78,7 @@ function createStockPile() {
 		var currentCard = deck.getCard();
 		currentCard.x = 100;
 		currentCard.y = 350;
+		currentCard.setRow(5);
 		stockPile.push(currentCard);
 		stage.addChild(stockPile[i]);
 	}
@@ -130,7 +137,67 @@ function createFourthRow() {
 		stage.addChild(fourthRow[i]);
 	}
 }
-
+//puts all the cards back into their original spots
+function rebuildCanvas() {
+	stage.removeAllChildren();
+	for(i=0; i<firstRow.length; i++) {
+		if(firstRow[i].isFaceUp()) {
+			firstRow[i].flip();
+			firstRow[i].setPlayed(false);
+		}
+		firstRow[i].x = firstRow[i].width*(i*3) + 180;
+		firstRow[i].y = firstRow[i].height/2;
+		stage.addChild(firstRow[i]);
+	}
+	for(i=0; i<secondRow.length; i++) {
+		if(secondRow[i].isFaceUp()) {
+			secondRow[i].flip();
+			secondRow[i].setPlayed(false);
+		}
+		if(i < 2)
+			secondRow[i].x = secondRow[i].width*i + secondRow[i].width*2;
+		else if(i < 4)
+			secondRow[i].x = secondRow[i].width*i + secondRow[i].width*3;
+		else secondRow[i].x = secondRow[i].width*i + secondRow[i].width*4;
+		secondRow[i].y = secondRow[i].height;
+		stage.addChild(secondRow[i]);
+	}
+	for(i=0; i<thirdRow.length; i++) {
+		if(thirdRow[i].isFaceUp()) {
+			thirdRow[i].flip();
+			thirdRow[i].setPlayed(false);
+		}
+		thirdRow[i].x = thirdRow[i].width*i + thirdRow[i].width*1.5;
+		thirdRow[i].y = thirdRow[i].height*1.5;
+		stage.addChild(thirdRow[i]);
+	}
+	for(i=0; i<fourthRow.length; i++) {
+		fourthRow[i].setPlayed(false);
+		console.log(fourthRow[i].hasBeenPlayed());
+		fourthRow[i].x = fourthRow[i].width + fourthRow[i].width*i;
+		fourthRow[i].y = 1.5*fourthRow[i].height + fourthRow[i].height/2;
+		stage.addChild(fourthRow[i]);
+	}
+	//pop from waste until one card left
+	//if waste card was in stockpile, put it back in stockpile
+	for(i=0; i<wastePile.length-1; i++) {
+		var wasteCard = wastePile.pop();
+		if(wasteCard.getRow() == 5) {
+			wasteCard.x = 100;
+			wasteCard.y = 350;
+			wasteCard.flip();
+			stockPile.push(wasteCard);
+		}
+	}
+	firstCard = stockPile.pop();
+	firstCard.flip()
+	addToWastePile(firstCard);
+	//redraw the stockpile
+	 for(i=0; i<stockPile.length; i++) {
+		stage.addChild(stockPile[i]);
+	} 	
+	stage.update();
+}
 //checks played card to see if adjacent card has also been played
 //if it has, this function should flip the corresponding card
 //on the row above the two adjacent cards

@@ -6,6 +6,8 @@
 var Card = function(number) {
 	this.initialize("images/" + 0 + ".png");
 	console.log( this.getImagePath() );
+	this.back = this.image;
+	this.back.src = this.image.src;
     this.faceUp = false;
     this.number = number;
     this.rowNumber;
@@ -24,8 +26,14 @@ var Card = function(number) {
 Card.prototype = new createjs.Bitmap();
 
 Card.prototype.flip = function() {
-    this.image = this.frontImage;
-    this.faceUp = true;
+	if( this.faceUp ) {
+		this.image = this.back;
+		this.faceUp = false;
+	}
+	else {
+		this.image = this.frontImage;
+		this.faceUp = true;
+	}
 };
 
 Card.prototype.getImagePath = function() {
@@ -60,8 +68,8 @@ Card.prototype.getRow = function() {
     return this.rowNumber;
 };
 
-Card.prototype.setPlayed = function() {
-    this.isPlayed = true;
+Card.prototype.setPlayed = function(trueOrFalse) {
+    this.isPlayed = trueOrFalse;
 };
 
 Card.prototype.hasBeenPlayed = function() {

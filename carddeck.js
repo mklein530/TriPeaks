@@ -10,10 +10,9 @@ function CardDeck() {
     //fill empty array
     for(i=1; i<=52; i++) {
         //fill deck with cards, with i being the number of the card
-        this.deck.push( new Card(i) );
+		var newCard = new Card(i);
+        this.deck.push(newCard);
     }
-    //shuffle deck
-    this.shuffle();
 }
 
 CardDeck.prototype.getCard = function() {
@@ -33,3 +32,10 @@ CardDeck.prototype.shuffle = function() {
       this.deck[randomIndex] = temp;
     }
 };
+
+CardDeck.prototype.resetDeck = function() {
+	for(i=0; i<this.deck.length; i++) {
+		if(this.deck[i].hasBeenPlayed())
+			this.deck[i].setPlayed(false);
+	}
+}
