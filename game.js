@@ -1,4 +1,4 @@
-//create background and HTML canvas
+//create background, HTML canvas, and initialize game objects and rows
 var canvas = document.getElementById("canvas");
 var stage = new createjs.Stage(canvas);
 var deck = new CardDeck();
@@ -9,9 +9,29 @@ var firstRow = [];
 var secondRow = [];
 var thirdRow = [];
 var fourthRow = [];
+var score = 0;
+
+//score initialization
+var font = "#F5F5F5"
+var scoreText = new createjs.Text("Score: " + score, "20px Arial", font);
+stage.addChild(scoreText);
+
+//time initialization
+var overallSeconds = 150; //2 minutes, 30 seconds
+var timer = new createjs.Text("Time: 2:30", "20px Arial", font);
+timer.y = 25;
+stage.addChild(timer);
+
+//bonus initialization
+var bonus = 20000;
+var bonusScore = new createjs.Text("Bonus: " + bonus, "20px Arial", font);
+bonusScore.y = 50;
+stage.addChild(bonusScore);
+
+//set interval for timer to one second
+setInterval(timerDisplay, 1000);
 
 window.onload = function init() {
-	
 	//get first card from deck and put on waste pile
 	var firstCard = deck.getCard();
 	firstCard.flip();
@@ -34,7 +54,7 @@ window.onload = function init() {
 		//get value of clicked card for comparison
 		var clicked = target.getValue();
 		//if the clicked card is at the top of the stock pile, add to waste pile
-		if( target.getNumber() == stockPile[stockPile.length-1].getNumber()) {
+		if( stockPile.length > 0 && target.getNumber() == stockPile[stockPile.length-1].getNumber()) {
 			var currentCard = stockPile.pop();
 			currentCard.flip();
 			addToWastePile(currentCard);
@@ -46,12 +66,37 @@ window.onload = function init() {
 		//if clicked value + waste value is 14 (ace and 2), it can be played
 		else if( target instanceof Card && clicked == (waste + 1) || clicked == (waste - 1) 
 				|| (clicked + waste == 14) ) {
+			//check for win or lose, display stats
+			if( playerHasWon() || playerHasLost() ) displayStats();
+			//if top of the waste pile is a card played from one of the peaks
+			//the clicked card is a consecutive match, add 200 points to score
+			if( wastePile[wastePile.length-1].hasBeenPlayed() )
+				score += 200;
+			//if it's not a consecutive match, add 100 points to score
+			else score += 100;
+			scoreText.text = "Score: " + score;
 			target.setPlayed(true);
 			addToWastePile(target); 
 			checkAdjacent(target);
 			stage.update();
 		}
 	});
+	stage.update();
+}
+
+function timerDisplay() {
+	if (bonus > 0) bonus -= 200;
+	bonusScore.text = "Bonus: " + bonus;
+	
+	overallSeconds--;
+	var minutes = Math.floor(overallSeconds/60);
+	seconds = overallSeconds - minutes*60;
+	
+	//if seconds is one digit, add a 0 to keep time format
+	if (seconds < 10) seconds = "0" + seconds;
+	timer.text = ("Time: " + minutes + ":" + seconds);
+	
+	if (overallSeconds <= 0) displayStats();
 	stage.update();
 }
 
@@ -255,4 +300,35 @@ function checkAdjacent(card) {
 				&& !(firstRow[2].isFaceUp()) )
 			firstRow[2].flip(); 
 	}
+}
+
+function displayStats() {
+	stage.removeAllChildren();
+	var endScore = score + bonus;
+	if( playerHasWon() )
+		var stats = new createjs.Text("Congratulations, You Won!\nScore: " + endScore, "30px Arial", font);
+	else 
+		var stats = new createjs.Text("You Lost. Better Luck Next Time\nScore: " + endScore, "30px Arial", font);
+	stats.x = 225;
+	stats.y = 175;
+	stage.addChild(stats);
+	stage.update();
+}
+
+function playerHasWon() {
+	var peaks = 0;
+	for(i=0; i<firstRow.length; i++) {
+		if(firstRow[i].hasBeenPlayed())
+			peaks++;
+	}
+	if (peaks == 3) return true;
+	return false;
+}
+
+function playerHasLost() {
+	//if player hasn't won and is out of time, player loses
+	if(overallSeconds == 0 && !playerHasWon())
+		return true;	
+	return false;
+	//need to implement a check for case where no more cards can be played
 }
