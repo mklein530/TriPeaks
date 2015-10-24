@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<head>
+<meta charset="utf-8">
+<title>Registration</title>
+<link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+<body>
+<?php
+// define variables and set to empty values
+$usernameErr = $emailErr = "";
+$username = $email = "";
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+   if (empty($_POST["username"])) {
+		$usernameErr = "Name is required";
+   } 
+   else {
+       $username = test_input($_POST["name"]);
+       // check if name only contains letters and whitespace
+       if (!preg_match("/^[a-zA-Z ]*$/",$name)) {
+		   $usernameErr = "Only letters and white space allowed"; 
+       }
+   }
+   
+   if (empty($_POST["email"])) {
+     $emailErr = "Email is required";
+   } 
+   else {
+     $email = test_input($_POST["email"]);
+     // check if e-mail address is well-formed
+     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+       $emailErr = "Invalid email"; 
+     }
+   }
+}
+
+function test_input($data) {
+   $data = trim($data);
+   $data = stripslashes($data);
+   $data = htmlspecialchars($data);
+   return $data;
+}
+?>
+<div class="container">
+	<section id="content">
+		<form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);>
+			<h1>Registration</h1>
+			<h2>Enter Username</h2>
+			<div>
+				<input type="text" placeholder="" required="" id="username" />
+			</div>
+			<h2>Enter Password</h2>
+			<div>
+				<input type="password" placeholder="" required="" id="password" />
+			</div>
+			<h2>Enter Valid E-Mail Address</h2>
+			<div>
+				<input type="email" placeholder="" required="" id="email" />
+			</div>
+			<div>
+				<input type="submit" value="Submit" />
+			</div>
+        </form>
+      <a href="#"></a>
+	  </section>
+</div>
+</body>
+</html>

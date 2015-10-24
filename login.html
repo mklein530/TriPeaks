@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<head>
+<meta charset="utf-8">
+<title>Login</title>
+<link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+<body>
+	<?php
+       $username = $_POST['username'];
+       $email = $_POST['email'];
+       $password = $_POST['password'];
+       if ($_POST['submit']) {
+           if (mail ($to, $subject, $body, $from)) {
+          
+           } else {
+                      }
+       }
+    ?>
+<div class="container">
+	<section id="content">
+		<form action="">
+			<h1>Enter Username</h1>
+			<div>
+				<input type="text" placeholder=" " required="" id="username" />
+			</div>
+			<h1>Enter Password</h1>
+			<div>
+				<input type="password" placeholder="" required="" id="password" />
+			</div>
+			<div>
+				<input type="submit" value="Submit" />
+      			</div>
+   		 </form>
+	<div
+	<a href="forgot.html">Forgot Password?</a> 
+       <a href="registration.html">Register</a>
+	</div>
+	</section>
+</div>
+</body>
+</html>

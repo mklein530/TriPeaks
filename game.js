@@ -1,3 +1,4 @@
+/******************Please read the readme file for known issues**********************/
 //create background, HTML canvas, and initialize game objects and rows
 var canvas = document.getElementById("canvas");
 var stage = new createjs.Stage(canvas);
@@ -30,6 +31,7 @@ stage.addChild(bonusScore);
 
 //set interval for timer to one second
 setInterval(timerDisplay, 1000);
+
 
 window.onload = function init() {
 	//get first card from deck and put on waste pile
@@ -90,7 +92,7 @@ function timerDisplay() {
 	
 	overallSeconds--;
 	var minutes = Math.floor(overallSeconds/60);
-	seconds = overallSeconds - minutes*60;
+	var seconds = overallSeconds - minutes*60;
 	
 	//if seconds is one digit, add a 0 to keep time format
 	if (seconds < 10) seconds = "0" + seconds;
@@ -183,6 +185,7 @@ function createFourthRow() {
 	}
 }
 //puts all the cards back into their original spots
+/***************code duplication, needs refactorization***************/
 function rebuildCanvas() {
 	stage.removeAllChildren();
 	for(i=0; i<firstRow.length; i++) {
@@ -241,6 +244,7 @@ function rebuildCanvas() {
 	 for(i=0; i<stockPile.length; i++) {
 		stage.addChild(stockPile[i]);
 	} 	
+	resetStats();
 	stage.update();
 }
 //checks played card to see if adjacent card has also been played
@@ -308,7 +312,7 @@ function displayStats() {
 	if( playerHasWon() )
 		var stats = new createjs.Text("Congratulations, You Won!\nScore: " + endScore, "30px Arial", font);
 	else 
-		var stats = new createjs.Text("You Lost. Better Luck Next Time\nScore: " + endScore, "30px Arial", font);
+		var stats = new createjs.Text("You Lost. Try not to do that.\nScore: " + endScore, "30px Arial", font);
 	stats.x = 225;
 	stats.y = 175;
 	stage.addChild(stats);
@@ -331,4 +335,29 @@ function playerHasLost() {
 		return true;	
 	return false;
 	//need to implement a check for case where no more cards can be played
+}
+
+/*********code duplication, needs to be fixed************/
+function resetStats() {
+	score = 0;
+
+	//score initialization
+	font = "#F5F5F5"
+	scoreText = new createjs.Text("Score: " + score, "20px Arial", font);
+	stage.addChild(scoreText);
+
+	//time initialization
+	overallSeconds = 150; //2 minutes, 30 seconds
+	timer = new createjs.Text("Time: 2:30", "20px Arial", font);
+	timer.y = 25;
+	stage.addChild(timer);
+
+	//bonus initialization
+	bonus = 20000;
+	bonusScore = new createjs.Text("Bonus: " + bonus, "20px Arial", font);
+	bonusScore.y = 50;
+	stage.addChild(bonusScore);
+
+	//set interval for timer to one second
+	//setInterval(timerDisplay, 1000);
 }
