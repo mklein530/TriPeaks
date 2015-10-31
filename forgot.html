@@ -6,12 +6,14 @@
 </head>
 <body>
 	<?php
-       $username = $_POST['username'];
+	   include('index.php');
+       $username = "";
+       $password = "";
        $email = $_POST['email'];
-
+       $sql = "SELECT * FROM UserTable";
        if ($_POST['submit']) {
            if (mail ($to, $subject, $body, $from)) {
-          
+          		
            } else {
                       }
        }
@@ -19,21 +21,14 @@
 <div class="container">
 	<section id="content">
 		<form action="">
-			<h1>Enter Username</h1>
-			<div>
-				<input type="text" placeholder=" " required="" id="username" />
-			</div>
 			<h1>Enter E-Mail</h1>
 			<div>
-				<input type="email" placeholder="" required="" id="email" />
+				<input type="email" placeholder="" required="" name="email" />
 			</div>
 			<div>
 				<input type="submit" value="Submit" />
       			</div>
    		 </form>
-	<div
-       <a href="registration.html">Register</a>
-	</div>
 	</section>
 </div>
 </body>

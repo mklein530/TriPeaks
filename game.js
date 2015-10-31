@@ -11,7 +11,6 @@ var secondRow = [];
 var thirdRow = [];
 var fourthRow = [];
 var score = 0;
-
 //score initialization
 var font = "#F5F5F5"
 var scoreText = new createjs.Text("Score: " + score, "20px Arial", font);
@@ -29,6 +28,7 @@ var bonusScore = new createjs.Text("Bonus: " + bonus, "20px Arial", font);
 bonusScore.y = 50;
 stage.addChild(bonusScore);
 
+var hasWon = 0;
 //set interval for timer to one second
 setInterval(timerDisplay, 1000);
 
@@ -45,8 +45,10 @@ window.onload = function init() {
 	createFourthRow();
 	var replay = document.getElementById("ReplayButton");
 	var newGame = document.getElementById("NewGame");
+	var iwin = document.getElementById("Win");
 	//newGame.addEventListener("click", window.location.reload(true));
 	replay.addEventListener("click", rebuildCanvas );
+	iwin.addEventListener("click", showScores );
 	stage.addEventListener("click", function(event) { 
 		//get the card that the user clicked 
 		var target = event.target;
@@ -84,8 +86,23 @@ window.onload = function init() {
 		}
 	});
 	stage.update();
+	if(playerHasWon()){
+		displayStats();
+		showScores();
+	}
 }
 
+function showScores() {
+	stage.removeAllChildren();
+	var endScore = score + bonus;
+	var stats = new createjs.Text("Congratulations, You Won!\nScore: " + endScore, "30px Arial", font);
+	stats.x = 225;
+	stats.y = 175;
+	stage.addChild(stats);
+	stage.update();
+	hasWon = 1;
+	window.open("scores.php?gamescore=" + endScore + "&win=" + hasWon);
+}
 function timerDisplay() {
 	if (bonus > 0) bonus -= 200;
 	bonusScore.text = "Bonus: " + bonus;
@@ -312,7 +329,7 @@ function displayStats() {
 	if( playerHasWon() )
 		var stats = new createjs.Text("Congratulations, You Won!\nScore: " + endScore, "30px Arial", font);
 	else 
-		var stats = new createjs.Text("You Lost. Try not to do that.\nScore: " + endScore, "30px Arial", font);
+		var stats = new createjs.Text("You Lost. Try again.\nScore: " + endScore, "30px Arial", font);
 	stats.x = 225;
 	stats.y = 175;
 	stage.addChild(stats);

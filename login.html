@@ -4,34 +4,22 @@
 <title>Login</title>
 <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
-<body>
-	<?php
-       $username = $_POST['username'];
-       $email = $_POST['email'];
-       $password = $_POST['password'];
-       if ($_POST['submit']) {
-           if (mail ($to, $subject, $body, $from)) {
-          
-           } else {
-                      }
-       }
-    ?>
 <div class="container">
 	<section id="content">
-		<form action="">
+		<form method="post" action="login.php">
 			<h1>Enter Username</h1>
 			<div>
-				<input type="text" placeholder=" " required="" id="username" />
+				<input type="text" placeholder=" " required="" name="username" />
 			</div>
 			<h1>Enter Password</h1>
 			<div>
-				<input type="password" placeholder="" required="" id="password" />
+				<input type="password" placeholder="" required="" name="password" />
 			</div>
 			<div>
 				<input type="submit" value="Submit" />
       			</div>
    		 </form>
-	<div
+	<div>
 	<a href="forgot.html">Forgot Password?</a> 
        <a href="registration.html">Register</a>
 	</div>
